@@ -1,0 +1,27 @@
+{
+    "name": "Banner-API"
+  , "description": "Interface between CourseShark server and Banner API given to us by Georgia Tech "
+  , "version": "0.0.0"
+  , "private": true
+  , "author": {
+      "name": "James Rundquist"
+    , "website": "(http://github.com/jrundquist)"
+  }
+  , "repository": {
+        "type": "git"
+      , "url": "ssh://git@github.com:courseshark/banner-api.git"
+    }
+  , "bugs": "https://github.com/courseshark/banner-api/issues"
+  , "engines": {
+      "node": ">=0.6.19"
+    }
+  , "dependencies": {
+      "coffee-script": "1.4.0"
+    }
+  , "devDependencies": {
+    }
+  , "directories": {
+      "lib": "./lib/"
+    }
+  , "main": "./lib/index"
+}
