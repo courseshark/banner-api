@@ -19,6 +19,8 @@
       "coffee-script": "1.4.0"
     }
   , "devDependencies": {
+        "mocha": "*"
+      , "should": "*"
     }
   , "directories": {
       "lib": "./lib/"
