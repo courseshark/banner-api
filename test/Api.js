@@ -51,6 +51,36 @@ describe('API', function(){
         done();
       })
     })
+
+    it('should throw an error if the result is not JSON', function(done){
+      var banner = bannerAPI('https://www.google.com/search?q={resource}');
+      banner.authenticate('password', {app_id: '', app_password: ''})
+      banner.apiCall('echo', {}, function(err, res){
+        err.should.be.an.instanceOf(Error)
+        err.message.should.match(/JSON/i)
+        done();
+      })
+    })
+
+    it('should add api_request_mode if not set', function(done){
+      banner.apiCall('echo', {}, function(err, res){
+        should.exist(res)
+        should.exist(res.request)
+        should.exist(res.request.api_request_mode)
+        res.request.api_request_mode.should.equal('sync')
+        done();
+      })
+    })
+
+    it('should override api_request_mode if set', function(done){
+      banner.apiCall('echo', {api_request_mode:'sync-set'}, function(err, res){
+        should.exist(res)
+        should.exist(res.request)
+        should.exist(res.request.api_request_mode)
+        res.request.api_request_mode.should.equal('sync-set')
+        done();
+      })
+    })
   })
 
 })

@@ -39,13 +39,19 @@ exports = module.exports = (url) ->
 
     #Append the authentication info to the data
     for key, value of @.credentials
-      data['auth.'+key] = value
+      data['api.'+key] = value
 
     @download(url, data, callback)
 
 
+  # Internal Downloader method
   download: (url, data, callback) ->
+    # Options:
+    #   url: String url to hit
+    #   data: GET parameters
+    #   callback: function accepts err and result
     urlParsed = urlUtil.parse url
+    data.api_request_mode = data.api_request_mode or 'sync'
     dlOptions =
       hostname: urlParsed.hostname
       host: urlParsed.host
@@ -57,14 +63,16 @@ exports = module.exports = (url) ->
         'User-Agent':  userAgentString
       'user-agent': userAgentString
 
+    # Setup http or https depending on URL
     if urlParsed.protocol is 'https:'
       httpOrHttps = https
+      # Tell the agent to accept old SSL
       dlOptions.agent = new https.Agent(
           secureProtocol: 'SSLv3_method'
         , secureOptions: require('constants').SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS)
     else
       httpOrHttps = http
-
+    #Setup request
     req = httpOrHttps.request dlOptions, (res)->
       buffer = ''
       res.setEncoding 'utf-8'
@@ -73,15 +81,44 @@ exports = module.exports = (url) ->
       res.on 'end', ()->
         try
           bufferJson = JSON.parse(buffer)
-          callback(null, bufferJson)
+          if bufferJson.api_result_data
+            resultData = JSON.parse bufferJson.api_result_data
+            callback null, resultData
+          else
+            callback null, bufferJson
         catch err
-          callback(null, buffer)
-
+          # Returned result was not JSON formot
+          callback new Error 'Invalid JSON response'
+    #Request eror handler
     req.on 'error', (e) ->
       callback(e)
-
     #Make the request
     req.end()
 
+  cleanJSONResponse: (dirtyJson) ->
+    cleanString = resultString.replace /[\\n\n]/gi, ''
+
   getTerms: (options, callback) ->
-    @apiCall('terms', options, callback)
+    # Options:
+    #   start_date_from: YYYY-MM-DD
+    #   start_date_to: YYYY-MM-DD
+    #   end_date_from YYYY-MM-DD
+    #   end_date_from YYYY-MM-DD
+    if typeof options is 'function' and not callback
+      callback = options
+      options = {}
+    @apiCall 'terms', options, (err, res)->
+      callback err, res?.api_result_data or res
+
+
+
+  # An alias for getSubjects
+  getDepartments: ->
+    @.getSubjects.apply(@, arguments)
+
+  # Get the subjects taught for a term
+  getSubjects: (termCode, callback) ->
+    # Options:
+    # * term_code: xxxxxx
+    return callback(new Error('Missing required term_code')) if not termCode
+    @apiCall 'subjects', {term_code: termCode}, callback
