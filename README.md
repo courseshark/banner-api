@@ -5,25 +5,14 @@ Interface between CourseShark server and Banner API given to us by Georgia Tech
 
 The API to the Banner endpoints provided by Georgia Tech's OIT department for [courseshark](https://github.com/courseshark/courseshark).
 
-## Example
+# Testing
 
-    var user = {
-        name: 'tj'
-      , pets: ['tobi', 'loki', 'jane', 'bandit']
-    };
-
-    user.should.have.property('name', 'tj');
-    user.should.have.property('pets').with.lengthOf(4);
-
-    someAsyncTask(foo, function(err, result){
-      should.not.exist(err);
-      should.exist(result);
-      result.bar.should.equal(foo);
-    });
+    make test
 
 # Usage
 
 ## Authentication
+__.authenticate(type, options)__
 
 Call `.authenticate` with a string then an object of settings
 
@@ -35,6 +24,11 @@ Call `.authenticate` with a string then an object of settings
     })
 
 ## Terms
+__.getTerms(options, callback)__
 
 Used to get a list of terms with optional parameters
+
+## Subjects
+__.getSubjects(termCode, callback)__ _or_ __.getDepartments(termCode, callback)__
+
 
