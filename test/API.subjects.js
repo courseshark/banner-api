@@ -23,6 +23,7 @@ describe('API.Subjects', function(){
 
     it('should return the subjects for a term specified', function(done){
       banner.getSubjects(201208, function(err, subjects){
+        err.should.not.be.an.instanceOf(Error)
         subjects.should.be.an.instanceOf(Array)
         subjects.length.should.be.above(1)
         done()
@@ -33,6 +34,8 @@ describe('API.Subjects', function(){
   describe('.getDepartments(term, callback', function(){
     it('should just be an alias for .getSubjects', function(done){
       banner.getDepartments(201208, function(err, departments){
+        err.should.not.be.an.instanceOf(Error)
+        should.exist(departments)
         departments.should.be.an.instanceOf(Array)
         departments.length.should.be.above(1)
         done()

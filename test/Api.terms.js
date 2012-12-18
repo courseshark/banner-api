@@ -22,11 +22,11 @@ describe('API.Terms', function(){
     })
     it('should return terms', function(done){
       banner.getTerms(function(err, terms){
+        err.should.not.be.an.instanceOf(Error)
         terms.should.be.an.instanceOf(Array)
         terms.length.should.be.above(1)
         done();
       })
     })
   })
-
 })

@@ -84,11 +84,16 @@ exports = module.exports = (url) ->
           if bufferJson.api_result_data
             resultData = JSON.parse bufferJson.api_result_data
             callback null, resultData
-          else
-            callback null, bufferJson
+          else if bufferJson.api_error_info
+            # The API returned an error, so turn it into an error object and forward it back (with the response object)
+            err = new Error(bufferJson.api_error_info.message)
+            err.result_code = bufferJson.api_error_info.result_code
+            err.type = bufferJson.api_error_info.type
+            err.log = bufferJson.api_provider_logs
+            callback err, bufferJson
         catch err
           # Returned result was not JSON formot
-          callback new Error 'Invalid JSON response'
+          callback new Error 'Invalid JSON response', buffer
     #Request eror handler
     req.on 'error', (e) ->
       callback(e)
